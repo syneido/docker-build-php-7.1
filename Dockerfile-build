@@ -25,7 +25,7 @@ RUN HOME=/ \
     && rm -r /tmp/pear/cache/* /tmp/pear/download/* \
     && docker-php-source delete \
     # Composer
-    && curl --silent --fail-early https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && curl --silent --fail-early https://getcomposer.org/installer | php -- --1 --install-dir=/usr/local/bin --filename=composer \
     # Symfony binary
     # QA - Globally https://twitter.com/s_bergmann/status/999635212723212288
     && mkdir --parents /tools/php-cs-fixer && composer require --working-dir=/tools/php-cs-fixer friendsofphp/php-cs-fixer \
