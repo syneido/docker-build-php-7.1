@@ -3,7 +3,8 @@ FROM alpine as new-alpine
 FROM php:7.1-cli-alpine
 COPY configure.sh /
 COPY php.ini /usr/local/etc/php
-COPY zz_additional.ini /usr/local/etc/php/conf.d/
+COPY zz_01-additional.ini /usr/local/etc/php/conf.d/
+COPY zz_02-xdebug.ini /usr/local/etc/php/conf.d/
 COPY --from=mssql /opt/microsoft/ /opt/microsoft/
 COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
 COPY --from=mssql /usr/lib/libmsodbcsql-13.so /usr/lib/libmsodbcsql-13.so
