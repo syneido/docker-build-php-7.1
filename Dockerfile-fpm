@@ -6,9 +6,7 @@ COPY configure.sh /
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY php.ini /usr/local/etc/php
 COPY zz_01-additional.ini /usr/local/etc/php/conf.d/
-COPY --from=mssql /opt/microsoft/ /opt/microsoft/
 COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
-COPY --from=mssql /usr/lib/libmsodbcsql-13.so /usr/lib/libmsodbcsql-13.so
 COPY --from=new-alpine /etc/ssl/cert.pem /etc/ssl/cert.pem
 
 RUN /configure.sh \
