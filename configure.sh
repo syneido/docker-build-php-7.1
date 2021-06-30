@@ -33,3 +33,7 @@ apk add --allow-untrusted msodbcsql17_17.7.2.1-1_amd64.apk
 rm msodbcsql17_17.7.2.1-1_amd64.apk
 
 apk del .build-deps
+
+### create php-session DIR
+mkdir /tmp/php-sessions/
+chmod +rw /tmp/php-sessions/
