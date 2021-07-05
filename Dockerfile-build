@@ -28,6 +28,8 @@ RUN HOME=/ \
     # Symfony binary
     # QA - Globally https://twitter.com/s_bergmann/status/999635212723212288
     && mkdir --parents /tools/php-cs-fixer && composer require --working-dir=/tools/php-cs-fixer friendsofphp/php-cs-fixer \
+    && mkdir --parents /tools/phpunit-bridge  && composer require --working-dir=/tools/phpunit-bridge symfony/phpunit-bridge \
+    && mkdir --parents /tools/phpstan && composer require --working-dir=/tools/phpstan phpstan/phpstan \
     && chmod -R o+rwx $COMPOSER_DIR $SYMFONY_DIR $TOOLS_DIR
 
 WORKDIR /app
