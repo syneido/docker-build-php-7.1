@@ -9,14 +9,13 @@ COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
 COPY --from=new-alpine /etc/ssl/cert.pem /etc/ssl/cert.pem
 
 ENV COMPOSER_DIR=/.composer \
-    SYMFONY_DIR=/.symfony \
-    TOOLS_DIR=/tools/
+    SYMFONY_DIR=/.symfony
 
 RUN HOME=/ \
     && /configure.sh \
     && rm /configure.sh \
     && docker-php-source extract \
-    && mkdir $COMPOSER_DIR $SYMFONY_DIR $TOOLS_DIR \
+    && mkdir $COMPOSER_DIR $SYMFONY_DIR \
     && apk add --no-cache $PHPIZE_DEPS \
     && pecl install xdebug-2.9.8 \
     && docker-php-ext-enable xdebug \
@@ -25,12 +24,11 @@ RUN HOME=/ \
     && docker-php-source delete \
     # Composer
     && curl --silent --fail-early https://getcomposer.org/installer | php -- --1 --install-dir=/usr/local/bin --filename=composer \
-    # Symfony binary
     # QA - Globally https://twitter.com/s_bergmann/status/999635212723212288
-    && mkdir --parents /tools/php-cs-fixer && composer require --working-dir=/tools/php-cs-fixer friendsofphp/php-cs-fixer \
-    && mkdir --parents /tools/phpunit-bridge  && composer require --working-dir=/tools/phpunit-bridge symfony/phpunit-bridge \
-    && mkdir --parents /tools/phpstan && composer require --working-dir=/tools/phpstan phpstan/phpstan \
-    && chmod -R o+rwx $COMPOSER_DIR $SYMFONY_DIR $TOOLS_DIR
+    && wget -O phpunit https://phar.phpunit.de/phpunit-6.phar && chmod +x phpunit && mv phpunit /usr/local/bin/phpunit \
+    && wget -O php-cs-fixer-v2 https://cs.symfony.com/download/php-cs-fixer-v2.phar && chmod +x php-cs-fixer-v2 && mv php-cs-fixer-v2 /usr/local/bin/php-cs-fixer \
+    && wget -O phpstan https://github.com/phpstan/phpstan/releases/download/0.12.91/phpstan.phar && chmod +x phpstan && mv phpstan /usr/local/bin/phpstan \
+    && chmod -R o+rwx $COMPOSER_DIR $SYMFONY_DIR
 
 WORKDIR /app
 
