@@ -1,6 +1,6 @@
-FROM mcr.microsoft.com/mssql-tools as mssql
+FROM microsoft/mssql-tools as mssql
 FROM alpine as new-alpine
-FROM php:7.4-fpm-alpine as prod
+FROM php:7.1-fpm-alpine as prod
 
 COPY configure.sh /
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf
@@ -18,7 +18,7 @@ COPY docker-dev-entrypoint /usr/local/bin
 COPY zz_02-xdebug.ini /usr/local/etc/php/conf.d/
 
 RUN apk add --no-cache $PHPIZE_DEPS \
-        && pecl install xdebug \
+        && pecl install xdebug-2.9.8 \
         && docker-php-ext-enable xdebug \
         && apk del $PHPIZE_DEPS
 
