@@ -1,0 +1,35 @@
+FROM  mcr.microsoft.com/mssql-tools as mssql
+FROM alpine as new-alpine
+FROM php:7.1-cli-alpine
+COPY configure.sh /
+COPY php.ini /usr/local/etc/php
+COPY zz_01-additional.ini /usr/local/etc/php/conf.d/
+COPY zz_02-xdebug.ini /usr/local/etc/php/conf.d/
+COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
+COPY --from=new-alpine /etc/ssl/cert.pem /etc/ssl/cert.pem
+
+ENV COMPOSER_DIR=/.composer \
+    SYMFONY_DIR=/.symfony
+
+RUN HOME=/ \
+    && /configure.sh \
+    && rm /configure.sh \
+    && docker-php-source extract \
+    && mkdir $COMPOSER_DIR $SYMFONY_DIR \
+    && apk add --no-cache $PHPIZE_DEPS \
+    && pecl install xdebug-2.9.8 \
+    && docker-php-ext-enable xdebug \
+    && apk del $PHPIZE_DEPS \
+    && rm -r /tmp/pear/cache/* /tmp/pear/download/* \
+    && docker-php-source delete \
+    # Composer
+    && curl --silent --fail-early https://getcomposer.org/installer | php -- --1 --install-dir=/usr/local/bin --filename=composer \
+    # QA - Globally https://twitter.com/s_bergmann/status/999635212723212288
+    && wget -O phpunit https://phar.phpunit.de/phpunit-6.phar && chmod +x phpunit && mv phpunit /usr/local/bin/phpunit \
+    && wget -O php-cs-fixer-v2 https://cs.symfony.com/download/php-cs-fixer-v2.phar && chmod +x php-cs-fixer-v2 && mv php-cs-fixer-v2 /usr/local/bin/php-cs-fixer \
+    && wget -O phpstan https://github.com/phpstan/phpstan/releases/download/0.12.91/phpstan.phar && chmod +x phpstan && mv phpstan /usr/local/bin/phpstan \
+    && chmod -R o+rwx $COMPOSER_DIR $SYMFONY_DIR
+
+WORKDIR /app
+
+
