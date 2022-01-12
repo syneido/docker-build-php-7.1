@@ -3,7 +3,7 @@
 set -ex
 
 PHP_EXTENSIONS="opcache bcmath bz2 calendar exif gd gettext gmp intl mcrypt recode shmop soap sockets sysvmsg sysvsem sysvshm tidy xsl mysqli pdo_mysql wddx zip pcntl"
-PECL_EXTENSION_PACKAGES="apcu-5.1.20 imagick-3.4.4 sqlsrv pdo_sqlsrv"
+PECL_EXTENSION_PACKAGES="apcu-5.1.20 imagick-3.4.4 sqlsrv-5.9.0 pdo_sqlsrv-5.9.0"
 PECL_EXTENSIONS="apcu imagick sqlsrv pdo_sqlsrv"
 RUN_DEPS="unzip libzip icu libxslt imagemagick libmcrypt recode tidyhtml freetype libjpeg-turbo libpng libwebp libxpm make"
 BUILD_DEPS="autoconf g++ libzip-dev zlib-dev libpng-dev libxml2-dev icu-dev bzip2-dev libc-dev gmp-dev libmcrypt-dev recode-dev gettext-dev tidyhtml-dev libxslt-dev imagemagick-dev freetype-dev libjpeg-turbo-dev libpng-dev libwebp-dev libxpm-dev tzdata unixodbc-dev"
