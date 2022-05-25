@@ -6,4 +6,3 @@ if [ -n "$FPM_UID" ] && [ -n "$FPM_GID" ]; then
 fi
 
 exec docker-php-entrypoint "$@"
-

@@ -3,19 +3,23 @@ FROM alpine as new-alpine
 FROM php:7.1-fpm-alpine as prod
 
 COPY configure.sh /
-COPY www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY php.ini /usr/local/etc/php
-COPY zz_01-additional.ini /usr/local/etc/php/conf.d/
+COPY config/fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY config/php/php.ini /usr/local/etc/php
+COPY config/php/zz_01-additional.ini /usr/local/etc/php/conf.d/
 COPY --from=mssql /opt/mssql-tools/ /opt/mssql-tools/
 COPY --from=new-alpine /etc/ssl/cert.pem /etc/ssl/cert.pem
+COPY config/docker-healthcheck /usr/local/bin/docker-healthcheck
+RUN chmod +x /usr/local/bin/docker-healthcheck
+
+HEALTHCHECK --interval=5s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
 
 RUN /configure.sh \
     && rm /configure.sh
 WORKDIR /var/www
 
 FROM prod as dev
-COPY docker-dev-entrypoint /usr/local/bin
-COPY zz_02-xdebug.ini /usr/local/etc/php/conf.d/
+COPY config/docker-dev-entrypoint /usr/local/bin
+COPY config/php/zz_02-xdebug.ini /usr/local/etc/php/conf.d/
 
 RUN apk add --no-cache $PHPIZE_DEPS \
         && pecl install xdebug-2.9.8 \
