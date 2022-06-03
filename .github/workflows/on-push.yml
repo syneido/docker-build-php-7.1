@@ -52,5 +52,5 @@ jobs:
           cache-to: type=inline
           tags: ghcr.io/${{ github.repository_owner }}/dev-${{ env.BASE_IMAGE_NAME }}-fpm:latest
           target: dev
-        - name: Image digest
-          run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
