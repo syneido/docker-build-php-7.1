@@ -1,6 +1,16 @@
-FROM  mcr.microsoft.com/mssql-tools as mssql
-FROM alpine as new-alpine
+FROM  mcr.microsoft.com/mssql-tools AS mssql
+FROM alpine AS new-alpine
 FROM php:7.1-cli-alpine
+
+RUN curl -sSLf \
+        -o /usr/local/bin/install-php-extensions \
+        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+    chmod +x /usr/local/bin/install-php-extensions
+COPY certs/sectigo_root_r46.crt /usr/local/share/ca-certificates/sectigo_root_r46.crt
+RUN apk update && apk upgrade && \
+    apk add --no-cache ca-certificates && \
+    update-ca-certificates
+
 COPY configure.sh /
 COPY php.ini /usr/local/etc/php
 COPY zz_01-additional.ini /usr/local/etc/php/conf.d/
@@ -17,10 +27,9 @@ RUN HOME=/ \
     && docker-php-source extract \
     && mkdir $COMPOSER_DIR $SYMFONY_DIR \
     && apk add --no-cache $PHPIZE_DEPS \
-    && pecl install xdebug-2.9.8 \
-    && docker-php-ext-enable xdebug \
+    && install-php-extensions xdebug \
     && apk del $PHPIZE_DEPS \
-    && rm -r /tmp/pear/cache/* /tmp/pear/download/* \
+    && rm -rf /tmp/pear/cache/* /tmp/pear/download/* \
     && docker-php-source delete \
     # Composer
     && curl --silent --fail-early https://getcomposer.org/installer | php -- --1 --install-dir=/usr/local/bin --filename=composer \

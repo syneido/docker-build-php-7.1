@@ -11,13 +11,13 @@ CONSOLE        = $(PHP_BUILD) php bin/console
 
 
 buildx-build:
-	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest --file ./Dockerfile-build ./
+	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest --file ./Dockerfile-build --no-cache ./
 
-buildx-push-build:
-	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest --file ./Dockerfile-build --push ./
+push-build:
+	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest -file ./Dockerfile-build  --push ./
 
 buildx-fpm:
-	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest --file ./Dockerfile-fpm ./
+	@docker buildx build --tag ghcr.io/adefilippi/dev-php7.1-fpm:latest --file ./Dockerfile-fpm --no-cache ./
 
-buildx-push-fpm:
-	@docker buildx build --tag ghcr.io/adefilippi/build-php7.1:latest --file ./Dockerfile-fpm ./
+push-fpm:
+	@docker buildx build --tag ghcr.io/adefilippi/dev-php7.1-fpm:latest --no-cache --file ./Dockerfile-fpm --push ./

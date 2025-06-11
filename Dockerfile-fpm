@@ -1,6 +1,15 @@
-FROM  mcr.microsoft.com/mssql-tools as mssql
-FROM alpine as new-alpine
-FROM php:7.1-fpm-alpine as prod
+FROM  mcr.microsoft.com/mssql-tools AS mssql
+FROM alpine AS new-alpine
+FROM php:7.1-fpm-alpine AS prod
+
+RUN curl -sSLf \
+        -o /usr/local/bin/install-php-extensions \
+        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+    chmod +x /usr/local/bin/install-php-extensions
+COPY certs/sectigo_root_r46.crt /usr/local/share/ca-certificates/sectigo_root_r46.crt
+RUN apk update && apk upgrade && \
+    apk add --no-cache ca-certificates && \
+    update-ca-certificates
 
 COPY configure.sh /
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf
@@ -13,13 +22,12 @@ RUN /configure.sh \
     && rm /configure.sh
 WORKDIR /var/www
 
-FROM prod as dev
+FROM prod AS dev
 COPY docker-dev-entrypoint /usr/local/bin
 COPY zz_02-xdebug.ini /usr/local/etc/php/conf.d/
 
 RUN apk add --no-cache $PHPIZE_DEPS \
-        && pecl install xdebug-2.9.8 \
-        && docker-php-ext-enable xdebug \
+        && install-php-extensions xdebug \
         && apk del $PHPIZE_DEPS
 
 ENTRYPOINT ["docker-dev-entrypoint"]
